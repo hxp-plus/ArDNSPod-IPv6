@@ -21,6 +21,8 @@ SUB_DOMAIN="router nas phone"
 newDomainIP=""
 # ipv6的前缀
 ipv6Prefix=""
+# 记录类型
+record_type='AAAA'
 
 # OS Detection
 case $(uname) in
@@ -32,7 +34,7 @@ case $(uname) in
 		  #ifconfig $(nvram get wan0_ifname_t) | awk '/Global/{print $3}' | awk -F/ '{print $1}'
       #ip addr show dev eth0 | sed -e's/^.*inet6 \([^ ]*\)\/.*$/\1/;t;d' #如果没有nvram，使用这条，注意将eth0改为本机上的网口设备 （通过 ifconfig 查看网络接口）
       # 获得公网ipv6
-      ip addr show | grep inet6 | grep 'scope global' | sed -e's/^.*inet6 \([^ ]*\)\/.*$/\1/;t;d'
+      ip addr show | grep inet6 | grep 'scope global' | sed -n '1p' | sed -e's/^.*inet6 \([^ ]*\)\/.*$/\1/;t;d'
     }
     ;;
   'FreeBSD')
@@ -68,15 +70,14 @@ dnsapi() {
     local inter="https://dnsapi.cn/${1}"
     local param="login_token=${LOGIN_TOKEN}&format=json&${2}"
     echo "${inter}?${param}"
-    curl -Ss "${inter}" -d "${param}"
-    # wget --quiet --no-check-certificate --secure-protocol=TLSv1_2 --output-document=- --user-agent=$agent --post-data $param $inter
+    #curl -Ss "${inter}" -d "${param}"
+    wget --quiet --no-check-certificate --secure-protocol=TLSv1_2 --output-document=- --post-data $param $inter
 }
 
 # Get Domain IP
 # arg: domain
 getDomainIP() {
     local domainID recordID recordIP
-    local record_type='AAAA'
     # Get domain ID
     domainID=$(dnsapi "Domain.Info" "domain=${1}")
 
@@ -146,7 +147,8 @@ checkDomainIP() {
     newDomainIP="${ipv6Prefix}:"$(echo $domainIP | sed 's/^\([a-f0-9A-F]*:\)\{4\}//')
 
     if [ $? -eq 0 ]; then
-        echo "domainIP: ${domainIP}"
+        echo "domainIP:    ${domainIP}"
+        echo "newDomainIP: ${newDomainIP}"
         if [ "$domainIP" != "$newDomainIP" ]; then
             postRS=$(modifyDomainIP $1 $2)
 
@@ -154,15 +156,13 @@ checkDomainIP() {
                 echo "update to ${postRS} successed."
                 return 0
             else
-                echo ${postRS}
+                echo "postRS: ${postRS}"
                 return 1
             fi
         fi
         echo "Last IP is the same as current, no action."
         return 1
     fi
-
-    echo ${domainIP}
 }
 
 # ipv6批量动态域名解析
@@ -170,19 +170,22 @@ checkDomainIP() {
  ddnspod() {
     local localIP=$(arIpAddress)
     # 获得ipv6的前缀
-    ipv6Prefix=$(echo $localIP | sed 's/\(:[a-f0-9A-F]*\)\{4\}$//')
+    ipv6Prefix=$(echo $localIP | sed 's/\(::1\)$//' | sed 's/\(:[a-f0-9A-F]*\)\{4\}$//')
     echo "localIP: ${localIP}"
     echo "ipv6Prefix: ${ipv6Prefix}"
 
     # 支持多个子域名
-    if [ -n "$2" ];then
-      for (( i = 2; i <= $#; i++ )); do
-          #statements
-          echo ''
-          echo "Updating Domain: ${!i}.${1}"
-          checkDomainIP $1 ${!i}
-      done
-    fi
+    # 兼容dash，for array 无法使用
+    i=2
+    while test $i -le $#; do
+        local cmd="echo \$$i"
+        local subDomain=$(eval $cmd)
+        echo ''
+        echo "Updating Domain: ${subDomain}.${1}"
+        checkDomainIP $1 ${subDomain}
+        i=$(( $i + 1 ))
+    done
+
     return 1
 }
 
