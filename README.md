@@ -27,7 +27,7 @@ SUB_DOMAIN="router nas phone"
 
 # ASUS-RT-AC86U 官方固件(3.0.0.4.384_81351)操作记录
 1. [启用 SSH](http://router.asus.com/Advanced_System_Content.asp)
-2. 拷贝`ddnspod-ipv6.sh`文件到`/jffs/scripts/ddnspod-ipv6.sh`
+2. [添加用户脚本](https://github.com/RMerl/asuswrt-merlin.ng/wiki/User-scripts)：拷贝`ddnspod-ipv6.sh`文件到`/jffs/scripts/ddnspod-ipv6.sh`
 3. [添加定时任务](https://github.com/RMerl/asuswrt-merlin.ng/wiki/Scheduled-tasks-(cron-jobs))
 ```bash
 # 例如每天3点15分更新域名的解析记录
@@ -35,6 +35,6 @@ cru a ddnspod-ipv6 "15 3 0 * *  /bin/bash /jffs/scripts/ddnspod-ipv6.sh"
 ```
 
 # Credit
-
+作者：[CongAn](https://github.com/CongAn)
 原始作者: anrip ProfFan
 分支来源 imki911/ArDNSPod
