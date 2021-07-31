@@ -9,12 +9,12 @@
 #################################################
 
 # 1. Combine your token ID and token together as follows
-LOGIN_TOKEN="184236,aa786f388f6cd138d5a53427bbf9d731"
+LOGIN_TOKEN="248977,c26645320270b1bf0f6b82a3f05d141e"
 
 # 2. Place each domain you want to check as follows
 # you can have multiple checkDomainIP blocks
-DOMAIN="github.com"
-SUB_DOMAIN="router nas phone"
+DOMAIN="hxp.plus"
+SUB_DOMAIN="ipv6 ddns"
 
 # Global Variables:
 # 新的域名ip
@@ -144,8 +144,8 @@ modifyDomainIP() {
 checkDomainIP() {
     local postRS
     local domainIP=$(getDomainIP $1 $2)
-    newDomainIP="${ipv6Prefix}:"$(echo $domainIP | sed 's/^\([a-f0-9A-F]*:\)\{4\}//')
-
+#    newDomainIP="${ipv6Prefix}:"$(echo $domainIP | sed 's/^\([a-f0-9A-F]*:\)\{4\}//')
+    newDomainIP=${localIP}
     if [ $? -eq 0 ]; then
         echo "domainIP:    ${domainIP}"
         echo "newDomainIP: ${newDomainIP}"

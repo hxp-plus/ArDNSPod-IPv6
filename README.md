@@ -1,17 +1,21 @@
 # ArDNSPod-IPv6
 
+IPv6 DDNS script for DNSPod modified by hxp.
+
+# Following is the original README of the upstream project.
+
 基于DNSPod用户API实现的纯Shell动态域名客户端，适配网卡地址。
 
 万物互联，更新一个宽带下所有已配置域名的设备ipv6地址。
 > 因为宽带运营商只动态ipv6地址的前缀，ipv6的后半部分是设备的唯一地址，永远不会变。
 
-# Usage
+## Usage
 
-## dnspod的配置
+### dnspod的配置
 1. 在dnspod上增加ipv6的解析记录，请确保配置完成的ipv6地址测试通过可用
 2. [在dnspod上创建密钥token](https://console.dnspod.cn/account/token)
 
-## 更改`ddnspod-ipv6.sh`配置
+### 更改`ddnspod-ipv6.sh`配置
 ```bash
 # 填入获得密钥ID和密钥token，用逗号拼接
 # LOGIN_TOKEN="密钥ID,密钥token"
@@ -25,7 +29,7 @@ DOMAIN="github.com"
 SUB_DOMAIN="router nas phone"
 ```
 
-# ASUS-RT-AC86U 官方固件(3.0.0.4.384_81351)操作记录
+## ASUS-RT-AC86U 官方固件(3.0.0.4.384_81351)操作记录
 1. [启用 SSH](http://router.asus.com/Advanced_System_Content.asp)
 2. [添加用户脚本](https://github.com/RMerl/asuswrt-merlin.ng/wiki/User-scripts)：拷贝`ddnspod-ipv6.sh`文件到`/jffs/scripts/ddnspod-ipv6.sh`
 3. [添加定时任务](https://github.com/RMerl/asuswrt-merlin.ng/wiki/Scheduled-tasks-(cron-jobs))
@@ -34,7 +38,7 @@ SUB_DOMAIN="router nas phone"
 cru a ddnspod-ipv6 "15 3 0 * *  /bin/bash /jffs/scripts/ddnspod-ipv6.sh"
 ```
 
-# Credit
+## Credit
 作者：[CongAn](https://github.com/CongAn)
 原始作者: anrip ProfFan
 分支来源 imki911/ArDNSPod
