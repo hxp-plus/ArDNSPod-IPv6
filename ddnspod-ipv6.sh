@@ -17,7 +17,6 @@ SUB_DOMAIN="ipv6.rhel9"
 
 # Global Variables
 newDomainIP=""
-ipv6Prefix=""
 record_type='AAAA'
 
 arIpAddress() {
@@ -96,20 +95,16 @@ checkDomainIP() {
 
 ddnspod() {
   local localIP=$(arIpAddress)
-  ipv6Prefix=$(echo $localIP | sed 's/\(::1\)$//' | sed 's/\(:[a-f0-9A-F]*\)\{4\}$//')
-    echo "localIP: ${localIP}"
-    echo "ipv6Prefix: ${ipv6Prefix}"
-    i=2
-    while test $i -le $#; do
-      local cmd="echo \$$i"
-      local subDomain=$(eval $cmd)
-      echo ''
-      echo "Updating Domain: ${subDomain}.${1}"
-      checkDomainIP $1 ${subDomain}
-      i=$(( $i + 1 ))
-    done
-    echo
-    return 1
+  i=2
+  while test $i -le $#; do
+    local cmd="echo \$$i"
+    local subDomain=$(eval $cmd)
+    echo "Updating Domain: ${subDomain}.${1}"
+    checkDomainIP $1 ${subDomain}
+    i=$(( $i + 1 ))
+  done
+  echo
+  return 1
 }
 
 ddnspod $DOMAIN $SUB_DOMAIN
