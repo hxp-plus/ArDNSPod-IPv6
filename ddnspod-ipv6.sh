@@ -81,7 +81,7 @@ checkDomainIP() {
     if [ "$domainIP" != "$newDomainIP" ]; then
       postRS=$(modifyDomainIP $1 $2)
       if [ $? -eq 0 ]; then
-        echo "update to ${postRS} successed."
+        echo "Update to ${postRS} successed."
         return 0
       else
         echo "postRS: ${postRS}"
